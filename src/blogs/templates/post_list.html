@@ -1,0 +1,15 @@
+{% extends "blog_generic.html" %}
+
+{% block title %}{{ section.title }}{% endblock %}
+
+{% block content %}
+    {% for post in object_list %}
+        <div>
+            <div><a href="/blogs/posts/{{ post.id }}"> {{ post.title }} </a></div>
+            <div>{{ post.text }}</div>
+            <div><a href="/blogs/posts/?author={{ post.author }}"> {{ post.author }} </a></div>
+            <div>{{ post.likes.count }}:{{ post.lc }}</div>
+
+        </div>
+    {% endfor %}
+{% endblock %}

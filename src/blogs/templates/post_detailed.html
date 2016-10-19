@@ -1,0 +1,16 @@
+{% extends "blog_generic.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div>
+        <div>{{ post.title }}</div>
+        <div>{{ post.text }}</div>
+        <div>{{ post.author }}</div>
+        <div><img src="{{ post.author.image_url }}" width="10%" height="10%" alt="Image"></div>
+        <div>{{ likes }}</div>
+        {% for comment in comments %}
+            <div> {{ comment }} </div>
+        {% endfor %}
+    </div>
+{% endblock %}
