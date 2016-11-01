@@ -9,6 +9,18 @@
     </title>
 </head>
 <body>
+<div id="header">
+    {% block header %}
+        {% if user.is_authenticated %}
+            <p>{{ user.username }}</p>
+            <p><a href="{% url 'core:logout' %}">Logout </a></p>
+            <p><a href="{% url 'blogs:new_post' %}"> New Record</a></p>
+        {% else %}
+            <li><a href="{% url 'core:login' %}">Login </a></li>
+            <li><a href="{% url 'core:register' %}">Register </a></li>
+        {% endif %}
+    {% endblock %}
+</div>
 <div id="sidebar">
     {% block sidebar %}
         <ul>
@@ -22,5 +34,7 @@
     {% block content %}
     {% endblock %}
 </div>
+
+
 </body>
 </html>

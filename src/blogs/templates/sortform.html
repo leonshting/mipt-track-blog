@@ -1,0 +1,12 @@
+{% block sort %}
+
+    <form method="get" action="{% url 'blogs:blog_post' pk=post.id %}" id="sortform">
+        <input type="submit" value="Sort">
+    </form>
+
+    <select name="sort" form="sortform">
+        <option value="earlier">earlier</option>
+        <option value="late">later</option>
+    </select>
+
+{% endblock %}

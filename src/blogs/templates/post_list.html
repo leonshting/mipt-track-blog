@@ -1,14 +1,26 @@
 {% extends "blog_generic.html" %}
 
+
 {% block title %}{{ section.title }}{% endblock %}
 
+
+
+
 {% block content %}
+    {% block sort %}
+        {% include "sortform.html" %}
+    {% endblock %}
+
     {% for post in object_list %}
         <div>
-            <div><a href="/blogs/posts/{{ post.id }}"> {{ post.title }} </a></div>
+            <div><a href="{% url 'blogs:blog_post' pk=post.id %}"> {{ post.title }} </a>
+                {% if user.is_authenticated and user == post.author %}
+                    <a href="{% url 'blogs:blog_post' pk=user.id %}edit">Edit</a>
+                {% endif %}
+            </div>
             <div>{{ post.text }}</div>
             <div><a href="/blogs/posts/?author={{ post.author }}"> {{ post.author }} </a></div>
-            <div>{{ post.likes.count }}:{{ post.lc }}</div>
+            <div>{{ post.likes.count }}</div>
 
         </div>
     {% endfor %}

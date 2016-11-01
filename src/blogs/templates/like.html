@@ -1,0 +1,13 @@
+{% block like %}
+    {{ likes }}
+    <form method="post" action="{% url "blogs:setlike" %}">
+        {% csrf_token %}
+        <input type="hidden" value="{% url "blogs:blog_post" pk=post.id %}" name="redirect_url">
+        <input type="hidden" value="{{ post.id }}" name="id">
+        {% if not liked %}
+            <input type="submit" value="Like It!">
+        {% else %}
+            <input type="submit" value="Like It!" disabled>
+        {% endif %}
+    </form>
+{% endblock %}
