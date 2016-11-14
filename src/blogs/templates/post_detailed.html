@@ -14,9 +14,11 @@
         <div>{{ post.author }}</div>
         <div><img src="{{ post.author.image_url }}" width="10%" height="10%" alt="Image"></div>
         <div>
+            {% if user.is_authenticated %}
             {% block like %}
                 {% include 'like.html' %}
             {% endblock %}
+            {% endif %}
         </div>
         {% for comment in comments %}
 

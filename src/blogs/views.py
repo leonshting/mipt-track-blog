@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from django.http import HttpResponseForbidden, HttpResponseRedirect, Http404
 from django.shortcuts import resolve_url, get_list_or_404, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView, MultipleObjectMixin
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, FormMixin, ModelFormMixin
@@ -11,7 +12,8 @@ from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-
+@login_required
+@require_POST
 def CatchLikeView(request):
     try:
         post = Post.objects.get(id=int(request.POST['id']))
@@ -63,7 +65,8 @@ class PostView(FormMixin, DetailView):
         data["comments"] = [i for i in self.get_object().comment_set.all()]
         data["commentlikes"] = [len(i.likes.all()) for i in data["comments"]]
         data["form"] = self.get_form(form_class=self.form_class)
-        if self.get_object().likes.all().filter(author=self.request.user).exists():
+        if not self.request.user.is_anonymous and self.get_object().likes.all().filter(
+                author=self.request.user).exists():
             data["liked"] = True
         else:
             data["liked"] = False

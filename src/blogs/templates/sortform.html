@@ -1,6 +1,6 @@
 {% block sort %}
 
-    <form method="get" action="{% url 'blogs:blog_post' pk=post.id %}" id="sortform">
+    <form method="get" action="{% url 'blogs:post_list' %}" id="sortform">
         <input type="submit" value="Sort">
     </form>
 
