@@ -1,12 +1,18 @@
 {% block sort %}
+    <label class="control-label"> Sort By</label>
+    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+        <a href="{% url 'blogs:post_list' %}?sort=liked" class="btn" role="button">Most Liked</a>
 
-    <form method="get" action="{% url 'blogs:post_list' %}" id="sortform">
-        <input type="submit" value="Sort">
-    </form>
-
-    <select name="sort" form="sortform">
-        <option value="earlier">earlier</option>
-        <option value="late">later</option>
-    </select>
+        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+            Creation Date
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <li role="presentation"><a class="dropdown-item" href="{% url 'blogs:post_list' %}?sort=earlier">Earlier
+            </a></li>
+            <li role="presentation"><a class="dropdown-item" href="{% url 'blogs:post_list' %}?sort=later">Later
+            </a></li>
+        </div>
+    </div>
 
 {% endblock %}

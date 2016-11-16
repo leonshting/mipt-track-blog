@@ -1,14 +1,14 @@
 from django.forms import ModelForm
 from django.http import HttpResponseForbidden, HttpResponseRedirect, Http404
-from django.shortcuts import resolve_url, get_list_or_404, render
-from django.urls import reverse
+from django.shortcuts import resolve_url, get_list_or_404
 from django.views.decorators.http import require_POST
-from django.views.generic.list import ListView, MultipleObjectMixin
+from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, FormMixin, ModelFormMixin
 from .models import Post, Comment, Like
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
+from .forms import *
 
 
 # Create your views here.
@@ -17,25 +17,24 @@ from django.contrib.auth.decorators import login_required
 def CatchLikeView(request):
     try:
         post = Post.objects.get(id=int(request.POST['id']))
-        like = Like(content_object=post, author=request.user)
-        like.save()
+        print("here")
+        if not post.likes.all().filter(author=request.user).exists():
+            like = Like(content_object=post, author=request.user)
+            like.save()
     except Post.DoesNotExist:
         raise Http404("You are trying to like non-existing post")
     return HttpResponseRedirect(request.POST['redirect_url'])
 
 
-class CommentForm(ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['text']
-
 class PostList(ListView):
     template_name = "post_list.html"
     model = Post
-    context_object_name = 'post'
+    context_object_name = 'posts'
+    paginate_by = 10
+    queryset = Post.objects.annotate(lc=Count('likes'))
+
     def get_queryset(self):
         qs = super(PostList, self).get_queryset()
-
         author = self.request.GET.get("author")
         sort = self.request.GET.get("sort")
         if author:
@@ -45,23 +44,21 @@ class PostList(ListView):
                 qs = get_list_or_404(qs.order_by('-created_at'))
             elif sort == 'later':
                 qs = get_list_or_404(qs.order_by('created_at'))
+            elif sort == 'liked':
+                qs = qs.order_by('-lc')
         return qs
 
-    def get_context_data(self, **kwargs):
-        data = super(PostList, self).get_context_data(**kwargs)
-        data["likes"] = [(i, len(i.likes.all())) for i in self.object_list]
-        return data
 
 
 class PostView(FormMixin, DetailView):
     template_name = "post_detailed.html"
     model = Post
     form_class = CommentForm
+    queryset = Post.objects.annotate(lc=Count('likes'))
 
     def get_context_data(self, **kwargs):
         data = super(PostView, self).get_context_data(**kwargs)
         data["post"] = self.get_object();
-        data["likes"] = len(self.get_object().likes.all())
         data["comments"] = [i for i in self.get_object().comment_set.all()]
         data["commentlikes"] = [len(i.likes.all()) for i in data["comments"]]
         data["form"] = self.get_form(form_class=self.form_class)
@@ -101,15 +98,12 @@ class PostView(FormMixin, DetailView):
 
 
 class LatestList(ListView):
+    paginate_by = 10
     template_name = "post_list.html"
     queryset = Post.objects.annotate(lc=Count('likes')).order_by('-created_at')[:10]
-    context_object_name = 'post'
+    context_object_name = 'posts'
 
 
-class PostForm(ModelForm):
-    class Meta:
-        model = Post
-        fields = ['text', 'title']
 
 
 class EditPost(UpdateView):
@@ -122,6 +116,10 @@ class EditPost(UpdateView):
             return HttpResponseForbidden(u"U cant touch this.")
         return handler
 
+    def get_context_data(self, **kwargs):
+        cd = super(EditPost, self).get_context_data(**kwargs)
+        cd['create'] = False
+        return cd
     template_name = "edit.html"
     model = Post
     form_class = PostForm
@@ -139,3 +137,8 @@ class NewPost(CreateView):
         form = super(NewPost, self).get_form(form_class)
         form.instance.author = self.request.user
         return form
+
+    def get_context_data(self, **kwargs):
+        cd = super(NewPost, self).get_context_data(**kwargs)
+        cd['create'] = True
+        return cd

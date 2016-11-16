@@ -1,13 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button>Edit!</button>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="jumbotron">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.title.errors }}
+                            {% render_field form.title placeholder="Post Title" %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.text.errors }}
+                            {% render_field form.text placeholder="Post Content" %}
+                        </div>
+                        {% if create %}
+                            <button type="submit" class="btn btn-default">Create</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-default">Create</button>
+                        {% endif %}
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

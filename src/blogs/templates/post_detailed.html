@@ -1,41 +1,101 @@
 {% extends "blog_generic.html" %}
-
+{% load static %}
 {% block title %}{{ post.title }}{% endblock %}
 
 
 {% block content %}
-    <div>
-        <div>{{ post.title }}
-            {% if user.is_authenticated and user == post.author %}
-                <a href="{{ request.path }}edit">Edit</a>
-            {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-8 col-sm-6 col-md-8">
+                <div class="media">
+
+                    <div class="media-body">
+                        <h4 class="media-heading">{{ post.title }}</h4>
+                        <h5><a href="{% url 'blogs:post_list' %}?author={{ post.author }}">{{ post.author }}
+                            <span class="label label-default"></span></a></h5>
+
+                        <p>{{ post.text }}</p>
+                    </div>
+                    <div class="media-right">
+
+                        <p> {% if user.is_authenticated and user == post.author %}
+                            <a href="{% url 'blogs:blog_post' pk=post.id %}edit">Edit</a>
+                        {% endif %}</p>
+                    </div>
+                    <div class="media-bottom">
+                        {% if user.is_authenticated %}
+                            {% block like %}
+                                {% include 'like.html' %}
+                            {% endblock %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-8 col-sm-6 col-md-4">
+                {% if user.is_authenticated %}
+                    <link rel="stylesheet" href="{% static 'css/comment.css' %}">
+                    <div class="comment-form">
+                        <div class="widget-area no-padding blank">
+                            <div class="status-upload">
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    {% for field in form %}
+                                        <div class="form-group">
+                                            {{ field }}
+                                        </div>
+                                    {% endfor %}
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-share"></i>
+                                    </button>
+
+                                </form>
+                            </div><!-- Status Upload  -->
+                        </div><!-- Widget Area -->
+                    </div>
+
+                {% else %}
+                    <h5 align="center"> Login to leave comments </h5>
+                {% endif %}
+                <div class="comments-container pre-scrollable ">
+                    <ul id="comments-list" class="comments-list">
+
+                        {% for comment in comments reversed %}
+
+                            <li>
+
+                                <!-- Avatar -->
+
+                                <div class="comment-box">
+                                    <div class="comment-head">
+                                        <div class="comment-avatar" style="float: right"><img
+                                                src="{{ post.author.image_url }}"
+                                                alt="">
+                                        </div>
+                                        {% if comment.post.author == comment.author %}
+                                            <h6 class="comment-name by-author"><a
+                                                    href="{% url 'blogs:post_list' %}?author={{ comment.author }}">{{ comment.author }}
+                                            </a></h6>
+
+                                        {% else %}
+                                            <h6 class="comment-name"><a
+                                                    href="{% url 'blogs:post_list' %}?author={{ comment.author }}">{{ comment.author }}
+                                            </a></h6>
+
+                                        {% endif %}
+                                    </div>
+                                    <div class="comment-content">
+                                        {{ comment.text }}
+
+                                        <!--<a href="#"> <i style="float: right" class="fa fa-heart"></i></a>-->
+                                    </div>
+                                </div>
+
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
         </div>
-        <div>{{ post.text }}</div>
-        <div>{{ post.author }}</div>
-        <div><img src="{{ post.author.image_url }}" width="10%" height="10%" alt="Image"></div>
-        <div>
-            {% if user.is_authenticated %}
-            {% block like %}
-                {% include 'like.html' %}
-            {% endblock %}
-            {% endif %}
-        </div>
-        {% for comment in comments %}
-
-            <div> {{ comment.text }}  </div>
-        {% endfor %}
-
-    </div>
-    <div>
-        {% if user.is_authenticated %}
-            <form method="post" action="">
-                {% csrf_token %}
-                {{ form }}
-                <button>cococo</button>
-            </form>
-
-        {% else %}
-            Login to leave comments
-        {% endif %}
     </div>
 {% endblock %}

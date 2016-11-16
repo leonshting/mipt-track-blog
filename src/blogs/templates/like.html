@@ -1,13 +1,24 @@
+{% load addfilt %}
 {% block like %}
-    {{ likes }}
-    <form method="post" action="{% url "blogs:setlike" %}">
+    <form class="form-inline" method="post" action="{% url "blogs:setlike" %}">
         {% csrf_token %}
+        <!--<input type="hidden" value="{{ post|ctype }}" name="contenttype">-->
         <input type="hidden" value="{% url "blogs:blog_post" pk=post.id %}" name="redirect_url">
         <input type="hidden" value="{{ post.id }}" name="id">
         {% if not liked %}
-            <input type="submit" value="Like It!">
+            <!--<a href="#"> <i style="float: right" class="fa fa-heart"></i></a>-->
+            <div class="form-group">
+                <label for="likeb">{{ post.lc }}</label>
+                <button type="submit" class="btn btn-success" id="likeb"><i class="fa fa-heart"></i>
+                </button>
+            </div>
         {% else %}
-            <input type="submit" value="Like It!" disabled>
+
+            <div class="form-group">
+                <label for="likeb">{{ post.lc }}</label>
+                <button type="submit" class="btn btn-success" id="likeb" disabled><i class="fa fa-heart"></i>
+                </button>
+            </div>
         {% endif %}
     </form>
 {% endblock %}

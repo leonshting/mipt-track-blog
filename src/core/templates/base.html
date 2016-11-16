@@ -1,34 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         {% block title %}
-            Привет
+            Baba Yaga is your goddess.
         {% endblock %}
     </title>
 </head>
 <body>
-<div id="header">
-    {% block header %}
-        {% if user.is_authenticated %}
-            <p>{{ user.username }}</p>
-            <p><a href="{% url 'core:logout' %}">Logout </a></p>
-            <p><a href="{% url 'blogs:new_post' %}"> New Record</a></p>
-        {% else %}
-            <li><a href="{% url 'core:login' %}">Login </a></li>
-            <li><a href="{% url 'core:register' %}">Register </a></li>
-        {% endif %}
-    {% endblock %}
-</div>
-<div id="sidebar">
-    {% block sidebar %}
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/blogs/">Blogs</a></li>
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"
+      integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+
+{% block header %}
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">
+                    BabaYaga
+                </a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/blogs/">Records</a></li>
+            </ul>
+            {% if not user.is_authenticated %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{% url 'core:register' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
+                    </li>
+                    <li><a href="{% url 'core:login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
-    {% endblock %}
-</div>
+            {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li style="color: #FFFFFF;"><a href="#">{{ user }}</a></li>
+                    <li><a href="{% url 'blogs:new_post' %}"><span class="glyphicon glyphicon-play-circle"></span> New
+                        record</a></li>
+                    <li><a href="{% url 'core:logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </nav>
+
+{% endblock %}
+
 
 <div id="content">
     {% block content %}
@@ -36,5 +59,11 @@
 </div>
 
 
+<script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </body>
 </html>
