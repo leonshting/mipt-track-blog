@@ -3,32 +3,34 @@
     Registration
 {% endblock %}
 {% block content %}
-    <div class="container text-center">
-        <form class="form-horizontal" action='' method="POST">
-            {% csrf_token %}
-            <fieldset>
-                {% for field in form %}
-                    <div class="control-group">
-                        <label class="control-label" for={{ field.id_for_label }}> {{ field.label_tag }}</label>
-                        <div class="controls">
-                            {{ field }}
-                            <p class="help-block">{{ field.help_text }}</p>
+    <div class="container text-center" xmlns="http://www.w3.org/1999/html">
+        <div class="col-sm-12">
+            <form class="form" action='' method="POST">
+                {% csrf_token %}
+                <fieldset>
+                    {% for field in form %}
+                        <div class="control-group">
+                            <label class="control-label" for={{ field.id_for_label }}> {{ field.label_tag }}</label>
+                            <div class="controls">
+                                {{ field }}
+                                <p class="help-block">{{ field.help_text }}</p>
+                            </div>
                         </div>
+                    {% endfor %}
+
+                </fieldset>
+
+                <div class="control-group">
+                    <!-- Button -->
+                    <div class="controls">
+                        <button class="btn btn-success">Register</button>
                     </div>
-                {% endfor %}
-
-            </fieldset>
-
-            <div class="control-group">
-                <!-- Button -->
-                <div class="controls">
-                    <button class="btn btn-success">Register</button>
                 </div>
-            </div>
-        </form>
-        {% for error in form.errors %}
-            {{ error }}
-        {% endfor %}
-    </div>
 
+                {% for error in form.errors %}
+                    {{ error }}
+                {% endfor %}
+            </form>
+        </div>
+    </div>
 {% endblock %}

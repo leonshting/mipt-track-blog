@@ -1,6 +1,9 @@
+import pytz
+from django.contrib.contenttypes.models import ContentType
 from django.forms import ModelForm
-from django.http import HttpResponseForbidden, HttpResponseRedirect, Http404
-from django.shortcuts import resolve_url, get_list_or_404
+from django.http import HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponse, JsonResponse
+from django.shortcuts import resolve_url, get_list_or_404, render
+from django.template import RequestContext
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -9,6 +12,8 @@ from .models import Post, Comment, Like
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from .forms import *
+from django.template.loader import render_to_string
+from datetime import datetime, timedelta
 
 
 # Create your views here.
@@ -16,14 +21,53 @@ from .forms import *
 @require_POST
 def CatchLikeView(request):
     try:
-        post = Post.objects.get(id=int(request.POST['id']))
-        print("here")
-        if not post.likes.all().filter(author=request.user).exists():
-            like = Like(content_object=post, author=request.user)
-            like.save()
+        print(request.POST)
+        if request.POST['contenttype'] == u'post':
+            post = Post.objects.get(id=int(request.POST['id']))
+            if not post.likes.all().filter(author=request.user).exists():
+                like = Like(content_object=post, author=request.user)
+                like.save()
+        elif request.POST['contenttype'] == u'comment':
+            comment = Comment.objects.get(id=int(request.POST['id']))
+            if not comment.likes.all().filter(author=request.user).exists():
+                like = Like(content_object=comment, author=request.user)
+                like.save()
     except Post.DoesNotExist:
         raise Http404("You are trying to like non-existing post")
-    return HttpResponseRedirect(request.POST['redirect_url'])
+    return HttpResponse("Great!")
+
+
+def GetLikes(request, pk):
+    lc = Like.objects.filter(content_type=ContentType.objects.get(model="post"), object_id=pk).count()
+    comments = [i for i in Post.objects.get(id=pk).comment_set.annotate(lc=Count('likes'))]
+    commdict = dict()
+    for comment in comments:
+        commdict[comment.id] = comment.lc
+    return JsonResponse({'postlike': lc, 'commentlikes': commdict})
+
+
+def GetComms(request, pk):
+    post = Post.objects.get(id=pk)
+    comments = []
+    utc_dt = datetime.utcfromtimestamp(int(request.GET['time']) / 1000)
+    # aware_utc_dt = utc_dt.replace(tzinfo=pytz.utc)
+    # tz = pytz.timezone('Europe/Moscow')
+    # dt = aware_utc_dt.astimezone(tz)
+    if request.GET['time']:
+        comments = [i for i in Post.objects.get(id=pk).comment_set.filter \
+            (created_at__gte=utc_dt).annotate(lc=Count('likes'))]
+    commdict = dict()
+    for comment in comments:
+        boo = not request.user.is_anonymous and comment.likes.all().filter(
+            author=request.user).exists()
+        context = RequestContext(request, {'post': post, 'comment': comment, 'lc': comment.lc, 'liked': boo,
+                                           'user': request.user})
+        commdict[comment.id] = render_to_string("comment.html",
+                                                {'post': post, 'comment': comment, 'lc': comment.lc, 'liked': boo,
+                                                 'user': request.user}, request=request)
+    return JsonResponse({"commenttext": commdict})
+
+
 
 
 class PostList(ListView):
@@ -60,7 +104,8 @@ class PostView(FormMixin, DetailView):
         data = super(PostView, self).get_context_data(**kwargs)
         data["post"] = self.get_object();
         data["comments"] = [i for i in self.get_object().comment_set.all()]
-        data["commentlikes"] = [len(i.likes.all()) for i in data["comments"]]
+        data["commentlikes"] = [(len(i.likes.all()), (not self.request.user.is_anonymous and i.likes.all().filter(
+            author=self.request.user).exists())) for i in data["comments"]]
         data["form"] = self.get_form(form_class=self.form_class)
         if not self.request.user.is_anonymous and self.get_object().likes.all().filter(
                 author=self.request.user).exists():

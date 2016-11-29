@@ -3,7 +3,6 @@ from django.contrib.contenttypes.models import ContentType
 
 register = template.Library()
 
-
 @register.filter(name='ctype')
 def content_type(obj):
     if not obj:
@@ -11,11 +10,9 @@ def content_type(obj):
     else:
         return ContentType.objects.get_for_model(obj)
 
-
 class isCurrentNode(template.Node):
     def __init__(self, patterns):
         self.patterns = patterns
-
     def render(self, context):
         path = context['request'].path
         for pattern in self.patterns:
@@ -24,7 +21,6 @@ class isCurrentNode(template.Node):
                 return "current"
             return ""
 
-
 @register.tag
 def is_current(parser, token):
     """ Check if the browse is currently at this supplied url"""
@@ -32,3 +28,8 @@ def is_current(parser, token):
     if len(args) < 2:
         raise (template.TemplateSyntaxError, "%r tag requires at least one argument" % args[0])
     return isCurrentNode(args[1:])
+
+
+@register.filter(name='zip')
+def zip_lists(a, b):
+    return zip(a, b)

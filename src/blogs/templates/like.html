@@ -1,24 +1,26 @@
 {% load addfilt %}
 {% block like %}
-    <form class="form-inline" method="post" action="{% url "blogs:setlike" %}">
+    {% if user.is_authenticated %}
+        <form name="like_form" class="form-inline" method="post" action="{% url "blogs:setlike" %}">
         {% csrf_token %}
-        <!--<input type="hidden" value="{{ post|ctype }}" name="contenttype">-->
-        <input type="hidden" value="{% url "blogs:blog_post" pk=post.id %}" name="redirect_url">
-        <input type="hidden" value="{{ post.id }}" name="id">
+            <input type="hidden" value="{{ object|ctype }}" name="contenttype">
+            <input type="hidden" value="{% url "blogs:blog_post" pk=postid %}" name="redirect_url">
+            <input type="hidden" value="{{ object.id }}" name="id">
         {% if not liked %}
             <!--<a href="#"> <i style="float: right" class="fa fa-heart"></i></a>-->
             <div class="form-group">
-                <label for="likeb">{{ post.lc }}</label>
+                <label id="likeblabel" for="likeb">{{ lc }}</label>
                 <button type="submit" class="btn btn-success" id="likeb"><i class="fa fa-heart"></i>
                 </button>
             </div>
         {% else %}
 
             <div class="form-group">
-                <label for="likeb">{{ post.lc }}</label>
+                <label id="likeblabel" for="likeb">{{ lc }}</label>
                 <button type="submit" class="btn btn-success" id="likeb" disabled><i class="fa fa-heart"></i>
                 </button>
             </div>
         {% endif %}
     </form>
+    {% endif %}
 {% endblock %}

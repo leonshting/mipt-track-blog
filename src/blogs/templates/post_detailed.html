@@ -1,5 +1,6 @@
 {% extends "blog_generic.html" %}
 {% load static %}
+{% load addfilt %}
 {% block title %}{{ post.title }}{% endblock %}
 
 
@@ -25,7 +26,7 @@
                     <div class="media-bottom">
                         {% if user.is_authenticated %}
                             {% block like %}
-                                {% include 'like.html' %}
+                                {% include 'like.html' with object=post lc=post.lc postid=post.id %}
                             {% endblock %}
                         {% endif %}
                     </div>
@@ -38,7 +39,7 @@
                     <div class="comment-form">
                         <div class="widget-area no-padding blank">
                             <div class="status-upload">
-                                <form method="post" action="">
+                                <form name="comment_form" method="post" action="">
                                     {% csrf_token %}
                                     {% for field in form %}
                                         <div class="form-group">
@@ -58,39 +59,10 @@
                 {% endif %}
                 <div class="comments-container pre-scrollable ">
                     <ul id="comments-list" class="comments-list">
-
-                        {% for comment in comments reversed %}
-
-                            <li>
-
-                                <!-- Avatar -->
-
-                                <div class="comment-box">
-                                    <div class="comment-head">
-                                        <div class="comment-avatar" style="float: right"><img
-                                                src="{{ post.author.image_url }}"
-                                                alt="">
-                                        </div>
-                                        {% if comment.post.author == comment.author %}
-                                            <h6 class="comment-name by-author"><a
-                                                    href="{% url 'blogs:post_list' %}?author={{ comment.author }}">{{ comment.author }}
-                                            </a></h6>
-
-                                        {% else %}
-                                            <h6 class="comment-name"><a
-                                                    href="{% url 'blogs:post_list' %}?author={{ comment.author }}">{{ comment.author }}
-                                            </a></h6>
-
-                                        {% endif %}
-                                    </div>
-                                    <div class="comment-content">
-                                        {{ comment.text }}
-
-                                        <!--<a href="#"> <i style="float: right" class="fa fa-heart"></i></a>-->
-                                    </div>
-                                </div>
-
-                            </li>
+                        {% for comment, commentlc in comments|zip:commentlikes reversed %}
+                            {% block comment %}
+                                {% include 'comment.html' with liked=commentlc.1 lc=commentlc.0 %}
+                            {% endblock %}
                         {% endfor %}
                     </ul>
                 </div>
@@ -98,4 +70,5 @@
             </div>
         </div>
     </div>
+    <script src="{% static 'js/basejs.js' %}"></script>
 {% endblock %}
