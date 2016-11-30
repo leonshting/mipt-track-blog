@@ -18,10 +18,10 @@ function result_getlike(data) {
 
 function insert_comment(htmlString) {
     $('.comments-list').prepend(htmlString);
-    $($('.comments-list').children()[0]).find('form[name=like_form]').submit(function (e) {
-        e.preventDefault();
-        onlike(e);
-    });
+    /*$($('.comments-list').children()[0]).find('form[name=like_form]').submit(function (e) {
+     e.preventDefault();
+     onlike(e);
+     );*/
     console.log(htmlString);
 }
 
@@ -30,11 +30,10 @@ function result_getcomms(result) {
         insert_comment(result.commenttext[key]);
     }
 }
-update_at = new Date().getTime();
 
 $(document).ready(
     function () {
-        $('form[name=like_form]').submit(function (e) {
+        $(document).on("submit", "form[name=like_form]", function (e) {
             e.preventDefault();
             onlike(e);
         });
@@ -43,23 +42,21 @@ $(document).ready(
             e.preventDefault();
             $.post($(e.target).attr('action'), $(e.target).serialize(), function (res) {
                 console.log(res);
+                id = $($(".comments-list").children()[0]).find(".comment-box").attr("id");
+                var param = jQuery.param({id: id});
 
-                var param = jQuery.param({time: update_at});
                 $.get(window.location.pathname + "getcomms/?" + param, result_getcomms);
             });
             $(e.target).find('#id_text').val('');
-            var d = new Date();
-            update_at = d.getTime();
         });
 
 
         window.setInterval(function () {
-            var d = new Date();
-            var param = jQuery.param({time: update_at});
+            id = $($(".comments-list").children()[0]).find(".comment-box").attr("id");
+            var param = jQuery.param({id: id});
             $.get(window.location.pathname + "getlike/", result_getlike);
             $.get(window.location.pathname + "getcomms/?" + param, result_getcomms);
-            update_at = d.getTime();
-        }, 30000);
+        }, 5000);
 
     });
 

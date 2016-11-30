@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 # Create your views here.
 @login_required
 @require_POST
-def CatchLikeView(request):
+def catchLikeView(request):
     try:
         print(request.POST)
         if request.POST['contenttype'] == u'post':
@@ -49,13 +49,13 @@ def GetLikes(request, pk):
 def GetComms(request, pk):
     post = Post.objects.get(id=pk)
     comments = []
-    utc_dt = datetime.utcfromtimestamp(int(request.GET['time']) / 1000)
+    idcomm = request.GET['id']
     # aware_utc_dt = utc_dt.replace(tzinfo=pytz.utc)
     # tz = pytz.timezone('Europe/Moscow')
     # dt = aware_utc_dt.astimezone(tz)
-    if request.GET['time']:
+    if request.GET['id']:
         comments = [i for i in Post.objects.get(id=pk).comment_set.filter \
-            (created_at__gte=utc_dt).annotate(lc=Count('likes'))]
+            (post__comment__id__gt=idcomm).annotate(lc=Count('likes'))]
     commdict = dict()
     for comment in comments:
         boo = not request.user.is_anonymous and comment.likes.all().filter(

@@ -1,5 +1,5 @@
 {% extends "blog_generic.html" %}
-
+{% load static %}
 
 {% block title %}{{ section.title }}{% endblock %}
 
@@ -34,9 +34,8 @@
                                 <a href="{% url 'blogs:blog_post' pk=post.id %}edit">Edit</a>
                             {% endif %}</p>
                         </div>
-                        <!--<div class="media-bottom">
-                            <h5><a href="{% url 'blogs:post_list' %}?author={{ post.author }}">{{ post.author }}</a></h5>
-                        </div>-->
+                        <div class="media-bottom">
+                        </div>
                     </div>
 
 
