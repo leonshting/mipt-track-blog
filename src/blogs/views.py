@@ -1,5 +1,8 @@
 import pytz
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Case, BooleanField, Avg
+from django.db.models import Prefetch
+from django.db.models import When
 from django.forms import ModelForm
 from django.http import HttpResponseForbidden, HttpResponseRedirect, Http404, HttpResponse, JsonResponse
 from django.shortcuts import resolve_url, get_list_or_404, render
@@ -19,7 +22,7 @@ from datetime import datetime, timedelta
 # Create your views here.
 @login_required
 @require_POST
-def catchLikeView(request):
+def catch_like_view(request):
     try:
         print(request.POST)
         if request.POST['contenttype'] == u'post':
@@ -37,7 +40,7 @@ def catchLikeView(request):
     return HttpResponse("Great!")
 
 
-def GetLikes(request, pk):
+def get_likes(request, pk):
     lc = Like.objects.filter(content_type=ContentType.objects.get(model="post"), object_id=pk).count()
     comments = [i for i in Post.objects.get(id=pk).comment_set.annotate(lc=Count('likes'))]
     commdict = dict()
@@ -46,7 +49,7 @@ def GetLikes(request, pk):
     return JsonResponse({'postlike': lc, 'commentlikes': commdict})
 
 
-def GetComms(request, pk):
+def get_comms(request, pk):
     post = Post.objects.get(id=pk)
     comments = []
     idcomm = request.GET['id']
@@ -60,8 +63,6 @@ def GetComms(request, pk):
     for comment in comments:
         boo = not request.user.is_anonymous and comment.likes.all().filter(
             author=request.user).exists()
-        context = RequestContext(request, {'post': post, 'comment': comment, 'lc': comment.lc, 'liked': boo,
-                                           'user': request.user})
         commdict[comment.id] = render_to_string("comment.html",
                                                 {'post': post, 'comment': comment, 'lc': comment.lc, 'liked': boo,
                                                  'user': request.user}, request=request)
@@ -75,7 +76,13 @@ class PostList(ListView):
     model = Post
     context_object_name = 'posts'
     paginate_by = 10
-    queryset = Post.objects.annotate(lc=Count('likes'))
+
+    queryset = Post.objects.annotate(lc=Count('likes')).select_related('author')
+
+    def get_context_data(self, **kwargs):
+        cd = super(PostList, self).get_context_data()
+        cd['avglikes'] = Post.objects.annotate(lc=Count('likes')).aggregate(avglikes=Avg('lc'))['avglikes']
+        return cd
 
     def get_queryset(self):
         qs = super(PostList, self).get_queryset()
@@ -98,27 +105,29 @@ class PostView(FormMixin, DetailView):
     template_name = "post_detailed.html"
     model = Post
     form_class = CommentForm
-    queryset = Post.objects.annotate(lc=Count('likes'))
 
     def get_context_data(self, **kwargs):
         data = super(PostView, self).get_context_data(**kwargs)
-        data["post"] = self.get_object();
-        data["comments"] = [i for i in self.get_object().comment_set.all()]
-        data["commentlikes"] = [(len(i.likes.all()), (not self.request.user.is_anonymous and i.likes.all().filter(
-            author=self.request.user).exists())) for i in data["comments"]]
-        data["form"] = self.get_form(form_class=self.form_class)
-        if not self.request.user.is_anonymous and self.get_object().likes.all().filter(
-                author=self.request.user).exists():
-            data["liked"] = True
-        else:
-            data["liked"] = False
+        like_qs = Like.objects.filter(author_id=self.request.user.id)
+        data["comments"] = self.object.comment_set.all().prefetch_related(Prefetch('likes', queryset=like_qs)) \
+            .annotate(lc=Count('likes')).select_related('author')
+        form_class = self.get_form_class()
+        data["form"] = self.get_form(form_class=form_class)
         return data
+
+    def get_queryset(self):
+        like_qs = Like.objects.filter(author_id=self.request.user.id)
+        qs = super(PostView, self).get_queryset()
+        qs = qs.annotate(lc=Count('likes')).select_related('author') \
+            .prefetch_related(Prefetch('likes', queryset=like_qs))
+        return qs
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
-        self.object = self.get_object()
-        form = self.get_form(form_class=self.form_class)
+        self.object = self.object
+        form_class = self.get_form_class()
+        form = self.get_form(form_class=form_class)
         if form.is_valid():
             return self.form_valid(form)
         else:
@@ -132,7 +141,7 @@ class PostView(FormMixin, DetailView):
         form = super(PostView, self).get_form(form_class)
         if (not self.request.user.is_anonymous):
             form.instance.author = self.request.user
-            form.instance.post = self.get_object()
+            form.instance.post = self.object
         else:
             form = None
         return form
@@ -145,7 +154,7 @@ class PostView(FormMixin, DetailView):
 class LatestList(ListView):
     paginate_by = 10
     template_name = "post_list.html"
-    queryset = Post.objects.annotate(lc=Count('likes')).order_by('-created_at')[:10]
+    queryset = Post.objects.annotate(lc=Count('likes')).select_related('author').order_by('-created_at')[:10]
     context_object_name = 'posts'
 
 

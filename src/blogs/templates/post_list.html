@@ -13,6 +13,15 @@
                 {% block sort %}
                     {% include "sortform.html" %}
                 {% endblock %}
+
+
+
+                {% block avglike %}
+                    {{ avglikes }}
+                {% endblock %}
+
+
+
                 {% for post in posts %}
                     <div class="media">
                         <div class="media-left">

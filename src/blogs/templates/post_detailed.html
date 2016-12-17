@@ -1,6 +1,7 @@
 {% extends "blog_generic.html" %}
 {% load static %}
 {% load addfilt %}
+{% load cache %}
 {% block title %}{{ post.title }}{% endblock %}
 
 
@@ -26,7 +27,7 @@
                     <div class="media-bottom">
                         {% if user.is_authenticated %}
                             {% block like %}
-                                {% include 'like.html' with object=post lc=post.lc postid=post.id %}
+                                {% include 'like.html' with liked=post.likes object=post lc=post.lc postid=post.id %}
                             {% endblock %}
                         {% endif %}
                     </div>
@@ -59,11 +60,14 @@
                 {% endif %}
                 <div class="comments-container pre-scrollable ">
                     <ul id="comments-list" class="comments-list">
-                        {% for comment, commentlc in comments|zip:commentlikes reversed %}
+                        {% cache 500 comments request.user.username %}
+                            {% for comment in comments reversed %}
                             {% block comment %}
-                                {% include 'comment.html' with liked=commentlc.1 lc=commentlc.0 %}
+
+                                {% include 'comment.html' with liked=comment.likes.all lc=comment.lc %}
                             {% endblock %}
                         {% endfor %}
+                        {% endcache %}
                     </ul>
                 </div>
 

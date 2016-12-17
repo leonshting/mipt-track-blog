@@ -15,7 +15,7 @@ class Like(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
-    author = models.ForeignKey('core.User')
+    author = models.ForeignKey('core.User', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -25,7 +25,7 @@ class Like(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
-    author = models.ForeignKey('core.User')
+    author = models.ForeignKey('core.User', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = GenericRelation(Like)
 
@@ -35,8 +35,8 @@ class Post(models.Model):
 
 class Comment(models.Model):
     text = models.TextField()
-    post = models.ForeignKey('Post')
-    author = models.ForeignKey('core.User')
+    post = models.ForeignKey('Post', db_index=True)
+    author = models.ForeignKey('core.User', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     likes = GenericRelation(Like)
 
