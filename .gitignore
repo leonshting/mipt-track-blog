@@ -126,9 +126,8 @@ src/core/migrations/__init__.pyc
 src/core/models.pyc
 src/core/urls.pyc
 src/core/views.pyc
-/blog.conf
 .idea/dataSources/
 .idea/sqldialects.xml
 collected_static/css/
 collected_static/js/
-/reset_migrations.sh
+reset_migrations.sh
