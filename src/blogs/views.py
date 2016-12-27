@@ -69,8 +69,6 @@ def get_comms(request, pk):
     return JsonResponse({"commenttext": commdict})
 
 
-
-
 class PostList(ListView):
     template_name = "post_list.html"
     model = Post
@@ -100,7 +98,6 @@ class PostList(ListView):
         return qs
 
 
-
 class PostView(FormMixin, DetailView):
     template_name = "post_detailed.html"
     model = Post
@@ -111,8 +108,7 @@ class PostView(FormMixin, DetailView):
         like_qs = Like.objects.filter(author_id=self.request.user.id)
         data["comments"] = self.object.comment_set.all().prefetch_related(Prefetch('likes', queryset=like_qs)) \
             .annotate(lc=Count('likes')).select_related('author')
-        form_class = self.get_form_class()
-        data["form"] = self.get_form(form_class=form_class)
+        data["form"] = self.get_form(form_class=self.form_class)
         return data
 
     def get_queryset(self):
@@ -125,9 +121,10 @@ class PostView(FormMixin, DetailView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
-        self.object = self.object
-        form_class = self.get_form_class()
-        form = self.get_form(form_class=form_class)
+        form = self.get_form(form_class=self.form_class)
+        form.instance.author = self.request.user
+        form.instance.post = self.get_object()
+
         if form.is_valid():
             return self.form_valid(form)
         else:
@@ -139,10 +136,7 @@ class PostView(FormMixin, DetailView):
 
     def get_form(self, form_class=None):
         form = super(PostView, self).get_form(form_class)
-        if (not self.request.user.is_anonymous):
-            form.instance.author = self.request.user
-            form.instance.post = self.object
-        else:
+        if self.request.user.is_anonymous:
             form = None
         return form
 
@@ -156,8 +150,6 @@ class LatestList(ListView):
     template_name = "post_list.html"
     queryset = Post.objects.annotate(lc=Count('likes')).select_related('author').order_by('-created_at')[:10]
     context_object_name = 'posts'
-
-
 
 
 class EditPost(UpdateView):
@@ -174,6 +166,7 @@ class EditPost(UpdateView):
         cd = super(EditPost, self).get_context_data(**kwargs)
         cd['create'] = False
         return cd
+
     template_name = "edit.html"
     model = Post
     form_class = PostForm

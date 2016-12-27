@@ -17,11 +17,12 @@ function result_getlike(data) {
 }
 
 function insert_comment(htmlString) {
-    $('.comments-list').prepend(htmlString);
-    /*$($('.comments-list').children()[0]).find('form[name=like_form]').submit(function (e) {
+    var comments = $('.comments-list');
+    comments.prepend(htmlString);
+    /*$(comments.children()[0]).find('form[name=like_form]').submit(function (e) {
      e.preventDefault();
-     onlike(e);
-     );*/
+     onlike(e)
+     });*/
     console.log(htmlString);
 }
 
