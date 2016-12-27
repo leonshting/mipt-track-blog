@@ -1,2 +1,2 @@
 # track_blog
-Simple blog engine witten to dive into django
+Simple blog engine written to dive into django
