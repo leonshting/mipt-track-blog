@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
-    Registration
+    {% trans  "Registration" %}
 {% endblock %}
 {% block content %}
     <div class="container text-center" xmlns="http://www.w3.org/1999/html">
@@ -23,7 +24,7 @@
                 <div class="control-group">
                     <!-- Button -->
                     <div class="controls">
-                        <button class="btn btn-success">Register</button>
+                        <button class="btn btn-success">{% trans "Register"%}</button>
                     </div>
                 </div>
 

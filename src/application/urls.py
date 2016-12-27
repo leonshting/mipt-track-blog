@@ -16,13 +16,21 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
-import settings
+from django.conf.urls.i18n import i18n_patterns
+from django.views.i18n import JavaScriptCatalog
 
-urlpatterns = [
-                  url(r'^admin/', admin.site.urls),
-                  url(r'^blogs/', include('blogs.urls', namespace="blogs")),
-                  url(r'^', include('core.urls', namespace="core"))
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#WTF
+#import settings
+from application import settings
+
+
+urlpatterns = [] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += i18n_patterns(
+                url(r'jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+                url(r'^admin/', admin.site.urls),
+                url(r'^blogs/', include('blogs.urls', namespace="blogs")),
+                url(r'^', include('core.urls', namespace="core")))
 
 if settings.DEBUG:
     import debug_toolbar

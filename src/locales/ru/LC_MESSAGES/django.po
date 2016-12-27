@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-12-27 13:50+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: blogs/models.py:27
+msgid "Heading"
+msgstr "Заголовок"
+
+#: blogs/models.py:29
+msgid "Author"
+msgstr "Автор"
+
+#: blogs/models.py:30 blogs/templates/sortform.html:9
+msgid "Creation Date"
+msgstr "Дата создания"
+
+#: blogs/templates/edit.html:20 blogs/templates/edit.html:22
+msgid "Create"
+msgstr "Создать"
+
+#: blogs/templates/post_detailed.html:60
+msgid "Login to leave comments"
+msgstr "Логинься чтобы трепаться"
+
+#: blogs/templates/post_list.html:43
+msgid "Edit"
+msgstr "Редактировать"
+
+#: blogs/templates/post_list.html:56
+msgid "Previous"
+msgstr "Предыдущая"
+
+#: blogs/templates/post_list.html:59
+msgid "Page"
+msgstr "Страница"
+
+#: blogs/templates/post_list.html:63
+msgid "Next"
+msgstr "Следующая"
+
+#: blogs/templates/sortform.html:3
+msgid "Sort By"
+msgstr "Сортировка"
+
+#: blogs/templates/sortform.html:5
+msgid "Most Liked"
+msgstr "Понравившиеся"
+
+#: blogs/templates/sortform.html:12
+msgid "Earlier"
+msgstr "Раньше"
+
+#: blogs/templates/sortform.html:14
+msgid "Later"
+msgstr "Позже"
+
+#: core/templates/base.html:10
+msgid "Baba Yaga is your goddess"
+msgstr "Твоя богиня"
+
+#: core/templates/base.html:34
+msgid "BabaYaga"
+msgstr "Мамка твоя"
+
+#: core/templates/base.html:38
+msgid "Records"
+msgstr "Записи"
+
+#: core/templates/base.html:42
+msgid "Sign Up"
+msgstr "Регистрация"
+
+#: core/templates/base.html:45 core/templates/login.html:29
+#: core/templates/login_modal.html:8 core/templates/login_modal.html:33
+msgid "Log In"
+msgstr "Логинься"
+
+#: core/templates/base.html:51
+msgid "New Record"
+msgstr "Новая запись"
+
+#: core/templates/base.html:52
+msgid "Log Out"
+msgstr "Выход"
+
+#: core/templates/home.html:7
+msgid "Blog"
+msgstr "Блог"
+
+#: core/templates/register.html:4
+msgid "Registration"
+msgstr "Регистрация"
+
+#: core/templates/register.html:27
+msgid "Register"
+msgstr "Регистрироваться"

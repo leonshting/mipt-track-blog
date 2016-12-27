@@ -1,6 +1,6 @@
 {% extends "blog_generic.html" %}
 {% load static %}
-
+{% load i18n %}
 {% block title %}{{ section.title }}{% endblock %}
 
 
@@ -40,7 +40,7 @@
                         </div>
                         <div class="media-right">
                             <p> {% if user.is_authenticated and user == post.author %}
-                                <a href="{% url 'blogs:blog_post' pk=post.id %}edit">Edit</a>
+                                <a href="{% url 'blogs:blog_post' pk=post.id %}edit">{% trans "Edit" %}</a>
                             {% endif %}</p>
                         </div>
                         <div class="media-bottom">
@@ -53,14 +53,14 @@
                 {% if is_paginated %}
                     <ul class="pagination">
                         {% if page_obj.has_previous %}
-                            <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                            <li><a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a></li>
                         {% endif %}
 
-                        <li class="disabled"><a href="?page={{ page_obj.current_page_number }}">Page
+                        <li class="disabled"><a href="?page={{ page_obj.current_page_number }}">{% trans "Page" %}
                             {{ page_obj.number }} of {{ paginator.num_pages }}</a></li>
 
                         {% if page_obj.has_next %}
-                            <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                            <li><a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a></li>
                         {% endif %}
                     </ul>
                 {% endif %}

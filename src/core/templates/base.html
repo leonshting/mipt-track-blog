@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 {% load static %}
+{% load i18n %}
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         {% block title %}
-            Baba Yaga is your goddess.
+            {% trans  "Baba Yaga is your goddess" %}
         {% endblock %}
     </title>
 </head>
@@ -30,26 +31,25 @@
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">
-                    BabaYaga
+                    {% trans "BabaYaga" %}
                 </a>
             </div>
             <ul class="nav navbar-nav">
-                <li><a href="/blogs/">Records</a></li>
+                <li><a href="/blogs/">{% trans "Records" %}</a></li>
             </ul>
             {% if not user.is_authenticated %}
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{% url 'core:register' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
+                    <li><a href="{% url 'core:register' %}"><span class="glyphicon glyphicon-user"></span> {% trans "Sign Up" %}</a>
                     </li>
                     <!--<li><a href="{% url 'core:login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>-->
-                    <li><a href="#" id="login_a"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    <li><a href="#" id="login_a"><span class="glyphicon glyphicon-log-in"></span> {% trans "Log In" %}</a></li>
 
                 </ul>
             {% else %}
                 <ul class="nav navbar-nav navbar-right">
                     <li style="color: #FFFFFF;"><a href="#">{{ user }}</a></li>
-                    <li><a href="{% url 'blogs:new_post' %}"><span class="glyphicon glyphicon-play-circle"></span> New
-                        record</a></li>
-                    <li><a href="{% url 'core:logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    <li><a href="{% url 'blogs:new_post' %}"><span class="glyphicon glyphicon-play-circle"></span> {% trans "New Record" %}</a></li>
+                    <li><a href="{% url 'core:logout' %}"><span class="glyphicon glyphicon-log-out"></span> {% trans "Log Out" %}</a>
                     </li>
                 </ul>
             {% endif %}

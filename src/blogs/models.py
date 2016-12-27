@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 # Create your models here.
+from django.utils.translation import ugettext_lazy
 
 
 class Like(models.Model):
@@ -23,10 +24,10 @@ class Like(models.Model):
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, verbose_name=ugettext_lazy(u'Heading'))
     text = models.TextField()
-    author = models.ForeignKey('core.User', db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey('core.User', db_index=True, verbose_name=ugettext_lazy(u'Author'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=ugettext_lazy(u'Creation Date'))
     likes = GenericRelation(Like)
 
     def __unicode__(self):

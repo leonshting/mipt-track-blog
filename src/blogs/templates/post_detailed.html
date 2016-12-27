@@ -2,6 +2,7 @@
 {% load static %}
 {% load addfilt %}
 {% load cache %}
+{% load i18n %}
 {% block title %}{{ post.title }}{% endblock %}
 
 
@@ -56,7 +57,7 @@
                     </div>
 
                 {% else %}
-                    <h5 align="center"> Login to leave comments </h5>
+                    <h5 align="center"> {% trans "Login to leave comments" %} </h5>
                 {% endif %}
                 <div class="comments-container pre-scrollable ">
                     <ul id="comments-list" class="comments-list">

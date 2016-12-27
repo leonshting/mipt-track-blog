@@ -1,3 +1,5 @@
 Django==1.10.1
 gunicorn==19.1.0
-
+python-memcached==1.58
+django-debug-toolbar==1.6
+django-widget-tweaks==1.4.1

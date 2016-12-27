@@ -1,16 +1,17 @@
 {% block sort %}
-    <label class="control-label"> Sort By</label>
+{% load i18n %}
+    <label class="control-label"> {% trans "Sort By" %}</label>
     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-        <a href="{% url 'blogs:post_list' %}?sort=liked" class="btn" role="button">Most Liked</a>
+        <a href="{% url 'blogs:post_list' %}?sort=liked" class="btn" role="button">{% trans "Most Liked" %}</a>
 
         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-            Creation Date
+            {% trans "Creation Date" %}
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            <li role="presentation"><a class="dropdown-item" href="{% url 'blogs:post_list' %}?sort=earlier">Earlier
+            <li role="presentation"><a class="dropdown-item" href="{% url 'blogs:post_list' %}?sort=earlier">{% trans "Earlier" %}
             </a></li>
-            <li role="presentation"><a class="dropdown-item" href="{% url 'blogs:post_list' %}?sort=later">Later
+            <li role="presentation"><a class="dropdown-item" href="{% url 'blogs:post_list' %}?sort=later">{% trans "Later" %}
             </a></li>
         </div>
     </div>

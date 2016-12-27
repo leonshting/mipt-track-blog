@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
     Log In
 {% endblock %}
@@ -25,12 +26,12 @@
             <div class="control-group">
                 <!-- Button -->
                 <div class="controls">
-                    <button class="btn btn-success">Log In</button>
+                    <button class="btn btn-success">{% trans "Log In"%}</button>
                 </div>
             </div>
         </form>
         {% for error in form.errors.values %}
-            <br>{{ error|striptags }}</br>
+            <br>{{ error|striptags }}
         {% endfor %}
     </div>
 

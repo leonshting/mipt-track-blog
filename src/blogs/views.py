@@ -1,3 +1,5 @@
+import logging
+
 import pytz
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, BooleanField, Avg
@@ -18,6 +20,8 @@ from .forms import *
 from django.template.loader import render_to_string
 from datetime import datetime, timedelta
 
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 @login_required
@@ -189,3 +193,9 @@ class NewPost(CreateView):
         cd = super(NewPost, self).get_context_data(**kwargs)
         cd['create'] = True
         return cd
+
+    def form_valid(self, form):
+        logger.critical("New post created")
+        return super(NewPost, self).form_valid(form)
+
+

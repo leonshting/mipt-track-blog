@@ -16,6 +16,7 @@
         <list>
           <option value="src.core.views.User" />
           <option value="Parinator" />
+          <option value="settings" />
         </list>
       </option>
     </inspection_tool>
