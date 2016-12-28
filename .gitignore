@@ -105,8 +105,7 @@ src/core/urls.pyc
 src/core/views.pyc
 .idea/dataSources/
 .idea/sqldialects.xml
-collected_static/css/
-collected_static/js/
+collected_static/
 media/
 reset_migrations.sh
 blog.conf
